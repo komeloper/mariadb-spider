@@ -1,0 +1,19 @@
+DROP TABLE IF EXISTS `test01_table`;
+CREATE TABLE IF NOT EXISTS `test01_table` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `node_id` int(11) NOT NULL DEFAULT 0,
+    `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3),
+    `created_user` varchar(255) NOT NULL,
+    `updated_at` datetime(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
+    `updated_user` varchar(255) NOT NULL,
+    `index01` int(11) NOT NULL DEFAULT 0,
+    `value01` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`id`,`node_id`,`created_at`),
+    KEY `idx01` (`index01`) USING BTREE
+) ENGINE = Spider DEFAULT CHARSET=utf8mb4
+PARTITION BY LIST (`node_id`) (
+    PARTITION p_node01 VALUES IN (1,4,7) COMMENT 'server "node1", table "node_test01_table"',
+    PARTITION p_node02 VALUES IN (2,5,8) COMMENT 'server "node2 node3", table "node_test01_table"',
+    PARTITION p_node03 VALUES IN (3,6,9) COMMENT 'server "node2 node3", table "node_test02_table"',
+    PARTITION p_other DEFAULT COMMENT 'server "node1", table "node_test02_table"'
+);

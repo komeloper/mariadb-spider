@@ -1,0 +1,92 @@
+services:
+  # primary DB(Spider)
+  primary:
+    image: mdb-spider:11.8
+    build:
+      context: ./build
+    container_name: ${PRIMARY_HOST}
+    ports:
+      - "33161:3306"
+    volumes:
+      - "primary_data:/var/lib/mysql"
+      - "./spider-initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      TZ: "${TIMEZONE}"
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: "spider_database"
+      MARIADB_USER: ${PRIMARY_USER}
+      MARIADB_PASSWORD: ${PRIMARY_PASSWORD}
+      NODE01: ${NODE01}
+      NODE02: ${NODE02}
+      NODE03: ${NODE03}
+      NODE_USER01: ${NODE_USER01}
+      NODE_USER02: ${NODE_USER02}
+      NODE_USER03: ${NODE_USER03}
+      NODE_PASSWORD01: ${NODE_PASSWORD01}
+      NODE_PASSWORD02: ${NODE_PASSWORD02}
+      NODE_PASSWORD03: ${NODE_PASSWORD03}
+    restart: unless-stopped
+
+  # node DB01(InnoDB)
+  node-db-1:
+    image: mariadb:11.8
+    container_name: ${NODE01}
+    ports:
+      - "33061:3306"
+    volumes:
+      - "node01_data:/var/lib/mysql"
+      - "./node-initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      TZ: "${TIMEZONE}"
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: "node_database"
+      MARIADB_USER: ${NODE_USER01}
+      MARIADB_PASSWORD: ${NODE_PASSWORD01}
+    restart: unless-stopped
+
+  # node DB02(InnoDB)
+  node-db-2:
+    image: mariadb:11.8
+    container_name: ${NODE02}
+    ports:
+      - "33062:3306"
+    volumes:
+      - "node02_data:/var/lib/mysql"
+      - "./node-initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      TZ: "${TIMEZONE}"
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: "node_database"
+      MARIADB_USER: ${NODE_USER02}
+      MARIADB_PASSWORD: ${NODE_PASSWORD02}
+    restart: unless-stopped
+
+  # node DB03(InnoDB)
+  node-db-3:
+    image: mariadb:11.8
+    container_name: ${NODE03}
+    ports:
+      - "33063:3306"
+    volumes:
+      - "node03_data:/var/lib/mysql"
+      - "./node-initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      TZ: "${TIMEZONE}"
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: "node_database"
+      MARIADB_USER: ${NODE_USER03}
+      MARIADB_PASSWORD: ${NODE_PASSWORD03}
+    restart: unless-stopped
+
+volumes:
+  primary_data:
+    name: "primary_data"
+
+  node01_data:
+    name: "node01_data"
+
+  node02_data:
+    name: "node02_data"
+
+  node03_data:
+    name: "node03_data"
